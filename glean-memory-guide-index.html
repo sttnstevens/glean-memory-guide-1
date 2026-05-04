@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Help Glean Work & Write Like YOU</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #123a61;
+    --blue: #009fdc;
+    --green: #00b388;
+    --white: #ffffff;
+    --light: #e7ebef;
+    --accent: #1c4cbf;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === BACKGROUND MESH === */
+  .bg-mesh {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .bg-mesh::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(0,179,136,0.18) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    animation: drift1 12s ease-in-out infinite alternate;
+  }
+  .bg-mesh::after {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,159,220,0.15) 0%, transparent 70%);
+    bottom: -100px; left: -100px;
+    animation: drift2 15s ease-in-out infinite alternate;
+  }
+  @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(40px, 60px); } }
+  @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-30px, -50px); } }
+
+  /* === LAYOUT === */
+  .shell {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* === HEADER === */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeSlideDown 0.7s ease forwards 0.1s;
+  }
+  .logo-wrap {
+    flex-shrink: 0;
+    width: 120px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+  }
+  .logo-wrap svg {
+    width: 100%;
+    height: 100%;
+  }
+  .header-divider {
+    width: 2px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+  }
+  .header-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  @keyframes fadeSlideDown {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* === HERO === */
+  .hero {
+    margin-bottom: 52px;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeSlideUp 0.7s ease forwards 0.3s;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,179,136,0.15);
+    border: 1px solid rgba(0,179,136,0.4);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--blue), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-body {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.78);
+    max-width: 620px;
+  }
+  .tip-callout {
+    margin-top: 20px;
+    background: rgba(0,159,220,0.1);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.75);
+    font-style: italic;
+    line-height: 1.65;
+  }
+
+  /* === SECTION TABS === */
+  .section-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.5s;
+  }
+  .tab-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 8px 18px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+  .tab-btn:hover {
+    border-color: var(--blue);
+    color: var(--white);
+    background: rgba(0,159,220,0.1);
+  }
+  .tab-btn.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: var(--white);
+    box-shadow: 0 4px 20px rgba(0,159,220,0.35);
+  }
+
+  /* === SECTIONS === */
+  .section-panel {
+    display: none;
+    animation: panelIn 0.4s ease;
+  }
+  .section-panel.active {
+    display: block;
+  }
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === STEP CARDS === */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.25s ease;
+    cursor: pointer;
+  }
+  .step-card:hover {
+    border-color: rgba(0,179,136,0.35);
+  }
+  .step-card.done {
+    border-color: rgba(0,179,136,0.4);
+    background: rgba(0,179,136,0.06);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    user-select: none;
+  }
+  .step-num {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+    transition: all 0.3s ease;
+  }
+  .step-card.done .step-num {
+    background: var(--green);
+    border-color: var(--green);
+    color: var(--white);
+    font-size: 16px;
+  }
+  .step-card.done .step-num::after {
+    content: '✓';
+  }
+  .step-card:not(.done) .step-num-text { display: block; }
+  .step-card.done .step-num-text { display: none; }
+
+  .step-title {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    line-height: 1.4;
+  }
+  .step-card.done .step-title {
+    color: rgba(255,255,255,0.55);
+    text-decoration: line-through;
+    text-decoration-color: rgba(0,179,136,0.5);
+  }
+  .step-toggle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.3);
+    transition: transform 0.25s ease;
+  }
+  .step-card.open .step-toggle {
+    transform: rotate(180deg);
+    color: var(--green);
+  }
+
+  .step-body {
+    display: none;
+    padding: 0 20px 18px 72px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .step-body.open {
+    display: block;
+  }
+  .step-body p { margin-top: 10px; }
+
+  .note-box {
+    margin-top: 12px;
+    background: rgba(0,159,220,0.1);
+    border: 1px solid rgba(0,159,220,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+  }
+  .note-box strong {
+    color: var(--blue);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .note-list {
+    margin-top: 8px;
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .note-list li::before {
+    content: '—';
+    color: var(--blue);
+    margin-right: 8px;
+  }
+
+  .mark-done-btn {
+    font-family: 'Poppins', sans-serif;
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(0,179,136,0.5);
+    background: transparent;
+    color: var(--green);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .mark-done-btn:hover {
+    background: var(--green);
+    color: var(--navy);
+  }
+
+  /* === PROGRESS BAR === */
+  .progress-wrap {
+    margin-bottom: 28px;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+  }
+  .progress-track {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--green));
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 0%;
+  }
+
+  /* === INFO CARDS (Why Do This / When to Update) === */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all 0.25s ease;
+  }
+  .info-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(0,179,136,0.3);
+    transform: translateY(-2px);
+  }
+  .info-card-icon {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+  .info-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--white);
+  }
+  .info-card p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.65;
+  }
+  .info-card .attn {
+    margin-top: 8px;
+    font-size: 12px;
+    color: rgba(0,159,220,0.8);
+    font-style: italic;
+  }
+
+  /* === OPTIONS BLOCK (Update Options) === */
+  .option-blocks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 20px;
+  }
+  @media (max-width: 560px) {
+    .option-blocks { grid-template-columns: 1fr; }
+  }
+  .option-block {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .option-block h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 10px;
+  }
+  .option-block ol {
+    padding-left: 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.75;
+  }
+
+  /* === PRO TIP BLOCK === */
+  .pro-tip {
+    background: linear-gradient(135deg, rgba(28,76,191,0.2), rgba(0,179,136,0.12));
+    border: 1px solid rgba(0,179,136,0.3);
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 20px;
+  }
+  .pro-tip-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 14px;
+  }
+  .pro-tip h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .pro-tip ol {
+    padding-left: 20px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.8;
+  }
+  .pro-tip li + li { margin-top: 4px; }
+
+  /* === TRIGGERS SECTION (When to Update) === */
+  .trigger-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .trigger-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+  }
+  .trigger-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* === COMPLETION === */
+  .completion-banner {
+    display: none;
+    text-align: center;
+    padding: 32px 24px;
+    background: linear-gradient(135deg, rgba(0,179,136,0.15), rgba(0,159,220,0.1));
+    border: 1px solid rgba(0,179,136,0.4);
+    border-radius: 18px;
+    margin-top: 24px;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  .completion-banner.show { display: block; }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .completion-banner h3 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .completion-banner p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.65;
+  }
+
+  /* SECTION HEADING */
+  .section-heading {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 20px;
+  }
+
+  .body-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  /* Prompt copy box */
+  .copy-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 13.5px;
+    color: var(--green);
+    font-family: 'Poppins', monospace;
+    position: relative;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+  .copy-btn {
+    font-family: 'Poppins', sans-serif;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .copy-btn:hover, .copy-btn.copied {
+    background: var(--green);
+    color: var(--navy);
+    border-color: var(--green);
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+
+<div class="shell">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-wrap">
+      <!-- AHEAD logo SVG (extracted from uploaded file) -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="233 283 974 243" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="wf" x="0%" y="0%" width="100%" height="100%">
+            <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0" color-interpolation-filters="sRGB"/>
+          </filter>
+          <filter id="lf" x="0%" y="0%" width="100%" height="100%">
+            <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.2126 0.7152 0.0722 0 0" color-interpolation-filters="sRGB"/>
+          </filter>
+          <clipPath id="cp">
+            <path d="M 233.332031 283.332031 L 1206.832031 283.332031 L 1206.832031 526 L 233.332031 526 Z" clip-rule="nonzero"/>
+          </clipPath>
+          <mask id="mk">
+            <g filter="url(#wf)">
+              <g filter="url(#lf)" transform="matrix(0.81125, 0, 0, 0.81, 233.333783, 283.333479)">
+                <image x="0" y="0" width="1200" height="300" preserveAspectRatio="xMidYMid meet"
+                  xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAEsCAAAAAD21hWMAAAAAmJLR0QA/4ePzL8AACAASURBVHic7Z3vddu40sbnvud+v7wVLFNBlArCVBClgoUriF1BlAq8qUDcCuxUIKYCaysQbwVWB34/2DElmRQfAIM/FJ/fOXs2kkFiSEAPgBkMKUIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+              </g>
+            </g>
+          </mask>
+        </defs>
+        <g clip-path="url(#cp)">
+          <g mask="url(#mk)">
+            <image x="233" y="283" width="974" height="243" preserveAspectRatio="xMidYMid meet"
+              xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAEsCAAAAAD21hWMAAAAAmJLR0QA/4ePzL8AACAASURBVHic7Z3vddu40sbnvud+v7wVLFNBlArCVBClgoUriF1BlAq8qUDcCuxUIKYCaysQbwVWB34/2DElmRQfAIM/FJ/fOXs2kkFiSEAPgBkMKUIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIYQQQgghhBBCCCGEEEIIIQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div style="display:flex;align-items:flex-end;gap:20px;margin-bottom:20px;">
+      <img src="data:image/png;base64,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" alt="AHEAD" style="width:auto;height:120px;flex-shrink:0;object-fit:contain;">
+      <h1>Help Glean Work &amp; Write<br><span>Like YOU</span></h1>
+    </div>
+    <p class="hero-body">
+      You can bring what other AI tools already know about you straight into Glean, so every chat starts from your real context instead of a blank slate.
+    </p>
+    <div class="tip-callout">
+      I routinely update my Glean's memory so it consistently understands my role, projects, and evolving style without me having to re-explain myself each time.
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="section-nav">
+    <button class="tab-btn active" onclick="switchTab('setup')">How to Set This Up</button>
+    <button class="tab-btn" onclick="switchTab('protip')">Pro Tip: Multiple AI Tools</button>
+    <button class="tab-btn" onclick="switchTab('when')">When to Update</button>
+    <button class="tab-btn" onclick="switchTab('why')">Why Do This Now</button>
+  </div>
+
+  <!-- ===== TAB: HOW TO SET UP ===== -->
+  <div class="section-panel active" id="tab-setup">
+    <div class="section-heading">Step-by-Step Setup</div>
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span>Your Progress</span>
+        <span id="progress-count">0 of 7 steps complete</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="steps-list" id="steps-list">
+
+      <div class="step-card" id="step-1">
+        <div class="step-header" onclick="toggleStep(1)">
+          <div class="step-num"><span class="step-num-text">1</span></div>
+          <div class="step-title">Open a new Glean chat.</div>
+          <div class="step-toggle">›</div>
+        </div>
+        <div class="step-body" id="body-1">
+          <p>Navigate to Glean and start a fresh chat session. This will be your memory setup conversation.</p>
+          <button class="mark-done-btn" onclick="markDone(1, event)">Mark as Done</button>
+        </div>
+      </div>
+
+      <div class="step-card" id="step-2">
+        <div class="step-header" onclick="toggleStep(2)">
+          <div class="step-num"><span class="step-num-text">2</span></div>
+          <div class="step-title">Type (or copy/paste) the setup prompt into Glean.</div>
+          <div class="step-toggle">›</div>
+        </div>
+        <div class="step-body" id="body-2">
+          <p>Use this exact prompt to get started:</p>
+          <div class="copy-box" id="prompt-box">
+            I want to import my memories from another AI assistant like ChatGPT, Claude, and Copilot. Can you help me with that?
+          </div>
+          <button class="mark-done-btn" onclick="markDone(2, event)">Mark as Done</button>
+        </div>
+      </div>
+
+      <div class="step-card" id="step-3">
+        <div class="step-header" onclick="toggleStep(3)">
+          <div class="step-num"><span class="step-num-text">3</span></div>
+          <div class="step-title">Glean will reply with a template prompt.</div>
+          <div class="step-toggle">›</div>
+        </div>
+        <div class="step-body" id="body-3">
+          <div class="note-box">
+            <strong>NOTE: What the template will ask for</strong>
+            The template will contain a request for the AI tool to provide a response about things like:
+            <ul class="note-list">
+              <li>Your role and team</li>
+              <li>Who you support and what you have worked on in the past and present</li>
+              <li>How you like things written (tone, length, format, etc.)</li>
+              <li>Tools and workflows you use a lot</li>
+              <li>Personality traits and habits</li>
+            </ul>
+          </div>
+          <button class="mark-done-btn" onclick="markDone(3, event)">Mark as Done</button>
+        </div>
+      </div>
+
+      <div class="step-card" id="step-4">
+        <div class="step-header" onclick="toggleStep(4)">
+          <div class="step-num"><span class="step-num-text">4</span></div>
+          <div class="step-title">Copy and paste the template prompt into your other AI tool.</div>
+          <div class="step-toggle">›</div>
+        </div>
+        <div class="step-body" id="body-4">
+          <p>Paste Glean's template into ChatGPT, Claude, Cursor, Copilot, or whichever AI assistant you use. Each tool will generate a personalized response based on what it knows about you.</p>
+          <button class="mark-done-btn" onclick="markDone(4, event)">Mark as Done</button>
+        </div>
+      </div>
+
+      <div class="step-card" id="step-5">
+        <div class="step-header" onclick="toggleStep(5)">
+          <div class="step-num"><span class="step-num-text">5</span></div>
+          <div class="step-title">Copy the response from your other AI tool.</div>
+          <div class="step-toggle">›</div>
+        </div>
+        <div class="step-body" id="body-5">
+          <p>Select and copy the full response that your other AI assistant generated from the template prompt. You will paste this directly into Glean in the next step.</p>
+          <button class="mark-done-btn" onclick="markDone(5, event)">Mark as Done</button>
+        </div>
+      </div>
+
+      <div class="step-card" id="step-6">
+        <div class="step-header" onclick="toggleStep(6)">
+          <div class="step-num"><span class="step-num-text">6</span></div>
+          <div class="step-title">Return to the same Glean memory chat and paste it in.</div>
+          <div class="step-toggle">›</div>
+        </div>
+        <div class="step-body" id="body-6">
+          <p>Go back to the Glean chat where you got the template. Paste in the response from your other AI tool. Glean will use what you pasted to improve your memory so it can work and write more like you.</p>
+          <button class="mark-done-btn" onclick="markDone(6, event)">Mark as Done</button>
+        </div>
+      </div>
+
+      <div class="step-card" id="step-7">
+        <div class="step-header" onclick="toggleStep(7)">
+          <div class="step-num"><span class="step-num-text">7</span></div>
+          <div class="step-title">Done! Glean will update your memory automatically.</div>
+          <div class="step-toggle">›</div>
+        </div>
+        <div class="step-body" id="body-7">
+          <p>Glean processes your pasted response and uses it to personalize your future chats. No further action required — your memory is now set up.</p>
+          <button class="mark-done-btn" onclick="markDone(7, event)">Mark as Done</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="completion-banner" id="completion-banner">
+      <div style="font-size:36px;margin-bottom:12px;">🎉</div>
+      <h3>Memory Setup Complete!</h3>
+      <p>Glean now knows your role, preferences, and style. Every future chat starts from your real context — not a blank slate.</p>
+    </div>
+  </div>
+
+  <!-- ===== TAB: PRO TIP ===== -->
+  <div class="section-panel" id="tab-protip">
+    <div class="section-heading">Pro Tip for Multiple AI Tools</div>
+
+    <p class="body-text">
+      If you have used more than one AI assistant, here is how to consolidate everything into one clean Glean memory.
+    </p>
+
+    <div class="pro-tip">
+      <div class="pro-tip-label">⚡ Pro Tip</div>
+      <h3>Combine Responses for Richer Memory</h3>
+      <ol>
+        <li>Use the same Glean template in each AI tool you use.</li>
+        <li>Once you have responses from all of them, open a <strong>separate</strong> Glean chat and ask it to:</li>
+      </ol>
+      <div style="margin:14px 0 14px 20px;display:flex;flex-direction:column;gap:10px;">
+        <div class="note-box" style="margin-top:0;">
+          <strong style="color:var(--green);">Combine all the responses.</strong>
+          Paste each AI tool's response and ask Glean to merge them into one view of you.
+        </div>
+        <div class="note-box" style="margin-top:0;">
+          <strong style="color:var(--green);">Remove any repeated or redundant information.</strong>
+          Multiple tools may overlap on the same things. Let Glean clean that up.
+        </div>
+        <div class="note-box" style="margin-top:0;">
+          <strong style="color:var(--green);">Produce one clean, crisp summary.</strong>
+          Ask Glean to give you a single, polished output.
+        </div>
+      </div>
+      <ol start="3">
+        <li>Copy that final, consolidated summary into your Glean "memory" chat.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ===== TAB: WHEN TO UPDATE ===== -->
+  <div class="section-panel" id="tab-when">
+    <div class="section-heading">When to Refresh Your Memory</div>
+
+    <p class="body-text">Update your Glean memory any time your context meaningfully shifts:</p>
+
+    <div class="trigger-list">
+      <div class="trigger-item"><div class="trigger-icon">🔁</div> Your role or team changes.</div>
+      <div class="trigger-item"><div class="trigger-icon">📌</div> Your major projects or priorities shift.</div>
+      <div class="trigger-item"><div class="trigger-icon">✍️</div> Your writing preferences change.</div>
+    </div>
+
+    <p class="body-text">You can update as often as you like. Choose whichever option fits your flow:</p>
+
+    <div class="option-blocks">
+      <div class="option-block">
+        <h4>Option 1 — Chat Update</h4>
+        <p style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;">Start a new chat and say something like:</p>
+        <div class="copy-box" style="margin-top:10px;">
+          I would like to update my memory. Here is the latest information about me: [type or paste your updates]
+        </div>
+      </div>
+      <div class="option-block">
+        <h4>Option 2 — Settings Page</h4>
+        <ol>
+          <li>From the Glean home page, click your profile initials in the bottom left corner.</li>
+          <li>Choose Settings.</li>
+          <li>Go to Personalization &gt; Memory to review and clean up your saved memories.</li>
+          <li>A chat opens automatically with the same template options.</li>
+        </ol>
+        <p style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.5);">You can use the full template, or simply tell Glean what to add, change, or forget in your own words.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: WHY DO THIS ===== -->
+  <div class="section-panel" id="tab-why">
+    <div class="section-heading">Why Set Up Memory Now</div>
+    <p class="body-text">Setting up memory gives you four immediate advantages:</p>
+
+    <div class="card-grid">
+      <div class="info-card">
+        <div class="info-card-icon">🎯</div>
+        <h3>More Relevant Help</h3>
+        <p>Glean can use your real role, work, and preferences across chats and agents that use memory, instead of starting from a generic guess.</p>
+        <p class="attn">ATTN: Fast Mode does not use memory, so it will not be able to pull in your customizations.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">✍️</div>
+        <h3>Stronger First Drafts</h3>
+        <p>Drafts come out closer to "ready to send," so you only need to tweak instead of rewrite.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">🔇</div>
+        <h3>Less Repetition</h3>
+        <p>You do not have to re-explain your background, projects, or style in each and every conversation.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-icon">📡</div>
+        <h3>Better Alignment Over Time</h3>
+        <p>When you update your memory, Glean stays in sync with what you are actually working on presently.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+  // TAB SWITCHING
+  function switchTab(id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  // STEP TOGGLE
+  function toggleStep(n) {
+    const card = document.getElementById('step-' + n);
+    const body = document.getElementById('body-' + n);
+    const isOpen = card.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.step-card').forEach(c => c.classList.remove('open'));
+    document.querySelectorAll('.step-body').forEach(b => b.classList.remove('open'));
+    // Open if was closed
+    if (!isOpen) {
+      card.classList.add('open');
+      body.classList.add('open');
+    }
+  }
+
+  // MARK DONE
+  const doneSteps = new Set();
+  const total = 7;
+
+  function markDone(n, e) {
+    e.stopPropagation();
+    const card = document.getElementById('step-' + n);
+    const body = document.getElementById('body-' + n);
+    if (!doneSteps.has(n)) {
+      doneSteps.add(n);
+      card.classList.add('done');
+      card.classList.remove('open');
+      body.classList.remove('open');
+      updateProgress();
+    }
+  }
+
+  function updateProgress() {
+    const pct = (doneSteps.size / total) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-count').textContent = doneSteps.size + ' of ' + total + ' steps complete';
+    if (doneSteps.size === total) {
+      document.getElementById('completion-banner').classList.add('show');
+    }
+  }
+
+  // COPY PROMPT
+  function copyPrompt(btn) {
+    const box = btn.parentElement;
+    const text = box.textContent.replace('Copy', '').replace('Copied!', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    }).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
